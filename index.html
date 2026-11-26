@@ -95,7 +95,7 @@ button{min-height:44px}
 const SB_URL="https://dbjdgjpmbzfrlobwxskx.supabase.co", ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRiamRnanBtYnpmcmxvYnd4c2t4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2NzM1OTMsImV4cCI6MjExMTI0OTU5M30.1BOR1OMHAgYwDO2YdcrhN-9xFcua7jCKwcm6Mvttg_o";
 const FN=SB_URL+"/functions/v1/market";
 const $=id=>document.getElementById(id), won=n=>Number(n).toLocaleString('ko-KR')+'원';
-let items=[],bids=[],editId=null,curId=null,img64=null,adminToken=null;
+let lastSig='',items=[],bids=[],editId=null,curId=null,img64=null,adminToken=null;
 try{adminToken=sessionStorage.getItem('fm_admin')}catch(e){}
 const H=()=>({apikey:ANON,Authorization:'Bearer '+ANON});
 
@@ -105,7 +105,8 @@ async function api(action,body){
 async function load(){
   try{
     const [a,b]=await Promise.all([fetch(SB_URL+'/rest/v1/items_public?select=*&order=created_at.desc',{headers:H()}),fetch(SB_URL+'/rest/v1/bids_public?select=*',{headers:H()})]);
-    if(!a.ok||!b.ok)throw 0;items=await a.json();bids=await b.json();$('notice').style.display='none';render()
+    if(!a.ok||!b.ok)throw 0;const na=await a.json(),nb=await b.json();$('notice').style.display='none';
+    const sig=JSON.stringify([na,nb]);if(sig===lastSig)return;lastSig=sig;items=na;bids=nb;render()
   }catch(e){const n=$('notice');n.textContent='데이터를 불러오지 못했어요. 잠시 후 다시 시도해주세요.';n.style.display='block'}}
 function setAdminUI(){const on=!!adminToken;$('adm').style.display=on?'inline-block':'none';$('loginBtn').textContent=on?'로그아웃':'관리자 로그인';if($('mDet').classList.contains('on'))fillDet()}
 async function toggleAdmin(){
@@ -160,9 +161,12 @@ async function saveItem(){
   try{await api(editId?'update_item':'create_item',{id:editId,name,seller,description:$('fDesc').value.trim(),password:pw,image:img64});
     closeM('mForm');await load()}catch(e){alert(e.message)}
   $('fSave').disabled=false}
-function openDet(id){curId=id;fillDet();$('mDet').classList.add('on')}
+function openDet(id){curId=id;$('det').textContent='';fillDet();$('mDet').classList.add('on')}
 function fillDet(){
-  const i=items.find(x=>x.id===curId),d=$('det');if(!i){closeM('mDet');return}d.textContent='';
+  const i=items.find(x=>x.id===curId),d=$('det');if(!i){closeM('mDet');return}
+  const keep={};['bName','bAmt','bCom'].forEach(k=>{const e=$(k);if(e)keep[k]=e.value});
+  const ae=document.activeElement,fid=ae&&ae.id,pos=ae&&ae.selectionStart;
+  d.textContent='';
   const x=mk('button','✕','x');x.onclick=()=>closeM('mDet');d.appendChild(x);
   const u=safeUrl(i.image_url);if(u){const im=mk('img',null,'pic');im.src=u;im.alt=i.name;d.appendChild(im)}
   d.appendChild(mk('h2',i.name));d.appendChild(mk('div','등록자 · '+i.seller,'by'));
@@ -182,14 +186,16 @@ function fillDet(){
   const f=mk('div');f.style.marginTop='14px';
   f.innerHTML='<label>이름</label><input id="bName" maxlength="30"><label>입찰 희망가 (원)</label><input id="bAmt" type="number" min="1" step="100" inputmode="numeric"><label>댓글 (선택)</label><input id="bCom" maxlength="200"><div style="margin-top:12px"><button id="bGo" style="width:100%">입찰 댓글 올리기</button></div>';
   d.appendChild(f);try{$('bName').value=localStorage.getItem('fm_name')||''}catch(e){}
+  Object.keys(keep).forEach(k=>{if(keep[k])$(k).value=keep[k]});
+  if(fid&&/^b(Name|Amt|Com)$/.test(fid)&&$(fid)){$(fid).focus();try{$(fid).setSelectionRange(pos,pos)}catch(e){}}
   $('bGo').onclick=async()=>{const bidder=$('bName').value.trim(),amount=Math.floor(Number($('bAmt').value));
     if(!bidder||!(amount>0)){alert('이름과 금액을 입력해주세요');return}
     try{localStorage.setItem('fm_name',bidder)}catch(e){}$('bGo').disabled=true;
-    try{await api('create_bid',{item_id:i.id,bidder,amount,comment:$('bCom').value.trim()});await load()}catch(er){alert(er.message);$('bGo').disabled=false}}}
+    try{await api('create_bid',{item_id:i.id,bidder,amount,comment:$('bCom').value.trim()});$('bAmt').value='';$('bCom').value='';await load()}catch(er){alert(er.message);$('bGo').disabled=false}}}
 $('q').oninput=render;
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('mousedown',e=>{if(e.target===m)m.classList.remove('on')}));
 if(/KAKAOTALK|NAVER\(inapp|Line\/|FBAN|FBAV|Instagram|DaumApps|; wv\)/i.test(navigator.userAgent))$('inapp').style.display='block';
-setAdminUI();load();setInterval(()=>{if(!document.hidden&&!$('mForm').classList.contains('on'))load()},10000);
+setAdminUI();load();setInterval(()=>{const t=document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName)&&document.activeElement.closest('.modal');if(!document.hidden&&!$('mForm').classList.contains('on')&&!t)load()},10000);
 </script>
 </body>
 </html>
