@@ -210,7 +210,7 @@ label{color:#597b95}.pic{border:1px solid #a9c0d1;border-radius:2px;padding:3px;
 <button class="x" onclick="closeM('mForm')" aria-label="닫기">✕</button>
 <h2 id="fTitle">물품 등록</h2>
 <label>물품명</label><input id="fName" maxlength="60">
-<label>등록자</label><input id="fSeller" maxlength="30" placeholder="이름 또는 닉네임">
+<label>등록자</label><input id="fSeller" maxlength="30" placeholder="이름">
 <label>설명</label><textarea id="fDesc" maxlength="800" placeholder="상태, 구성품, 수령 방법 등"></textarea>
 <label>사진</label><input type="file" id="fImg" accept="image/*">
 <div id="pwBox"><label id="pwLabel">임시 비밀번호 (4자 이상)</label><input id="fPw" type="password" maxlength="64" autocomplete="new-password">
@@ -321,13 +321,13 @@ function fillDet(){
     if(adminToken){const bx=mk('button','✕','ghost');bx.style.padding='2px 8px';bx.onclick=async()=>{try{await api('delete_bid',{id:b.id});load()}catch(er){alert(er.message)}};r.appendChild(bx)}
     d.appendChild(r)});
   const f=mk('div');f.style.marginTop='14px';
-  f.innerHTML='<label>👤 닉네임 (최대 10자)</label><input id="bName" maxlength="10" placeholder="예: 산타"><label>💰 입찰 희망가 (원)</label><input id="bAmt" type="number" min="1000" step="1000" inputmode="numeric" placeholder="예: 5000"><div class="hint">1,000원 단위로만 입력할 수 있어요 (예: 5000, 6000)</div><label>💬 댓글 (선택)</label><input id="bCom" maxlength="200" placeholder="판매자에게 남길 말"><div style="margin-top:12px"><button id="bGo" style="width:100%">입찰 댓글 올리기</button></div>';
+  f.innerHTML='<label>👤 이름</label><input id="bName" maxlength="10" placeholder="예: 산타"><label>💰 입찰 희망가 (원)</label><input id="bAmt" type="number" min="1000" step="1000" inputmode="numeric" placeholder="예: 5000"><div class="hint">1,000원 단위로만 입력할 수 있어요 (예: 5000, 6000)</div><label>💬 댓글 (선택)</label><input id="bCom" maxlength="200" placeholder="판매자에게 남길 말"><div style="margin-top:12px"><button id="bGo" style="width:100%">입찰 댓글 올리기</button></div>';
   d.appendChild(f);try{$('bName').value=(localStorage.getItem('fm_name')||'').slice(0,10)}catch(e){}
   Object.keys(keep).forEach(k=>{if(keep[k])$(k).value=keep[k]});
   if(fid&&/^b(Name|Amt|Com)$/.test(fid)&&$(fid)){$(fid).focus();try{$(fid).setSelectionRange(pos,pos)}catch(e){}}
   $('bGo').onclick=async()=>{const bidder=$('bName').value.trim(),amount=Math.floor(Number($('bAmt').value));
-    if(!bidder||!(amount>0)){alert('닉네임과 금액을 입력해주세요');return}
-    if([...bidder].length>10){alert('닉네임은 10자까지 입력할 수 있어요');return}
+    if(!bidder||!(amount>0)){alert('이름과 금액을 입력해주세요');return}
+    if([...bidder].length>10){alert('이름은 10자까지 입력할 수 있어요');return}
     if(amount<1000||amount%1000!==0){alert('입찰 희망가는 1,000원 단위로만 입력할 수 있어요 (예: 5000, 6000)');return}
     try{localStorage.setItem('fm_name',bidder)}catch(e){}$('bGo').disabled=true;
     try{await api('create_bid',{item_id:i.id,bidder,amount,comment:$('bCom').value.trim()});$('bAmt').value='';$('bCom').value='';await load()}catch(er){alert(er.message);$('bGo').disabled=false}}}
