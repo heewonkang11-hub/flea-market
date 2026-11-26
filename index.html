@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>2025 DAS R&D 행복나눔 플리마켓</title>
+<style>
+:root{--bg:#fff8f0;--card:#fff;--ink:#2b1a1a;--mute:#7a6a68;--red:#c8102e;--green:#146b3a;--gold:#e0a526;--line:#ead9cc;--box:#fff;--warn:#fff3cd;--warnink:#5a4400}
+@media (prefers-color-scheme:dark){:root{--bg:#101f17;--card:#1a2f23;--ink:#fbeee6;--mute:#b9a9a2;--line:#2f4a3a;--box:#14271c;--warn:#3d3410;--warnink:#ffe9a3}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif}
+#snow{position:fixed;inset:0;pointer-events:none;z-index:50}
+.lights{height:14px;background:repeating-linear-gradient(90deg,#ff3b3b 0 22px,#ffd23f 22px 44px,#3bd16f 44px 66px,#4aa8ff 66px 88px);animation:blink 1.6s steps(2) infinite}
+@keyframes blink{50%{filter:brightness(.55)}}@media (prefers-reduced-motion:reduce){.lights{animation:none}}
+header{background:linear-gradient(135deg,#c8102e,#7d0a1c 55%,#0f3d24);color:#fff;text-align:center;padding:30px 16px;border-bottom:6px solid var(--gold)}
+header h1{margin:6px 0 4px;font-size:clamp(24px,5vw,38px)}header p{margin:0;opacity:.92;font-size:14px}
+main{max-width:1100px;margin:0 auto;padding:18px 14px 60px}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.bar input[type=search]{flex:1;min-width:160px}
+input,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--box);color:var(--ink);font:inherit}
+textarea{min-height:80px;resize:vertical}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:10px 16px;background:var(--green);color:#fff;font-weight:600}
+button.red{background:var(--red)}button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}button:disabled{opacity:.5}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;position:relative}
+.card:hover{box-shadow:0 8px 20px rgba(200,16,46,.18)}.card:before{content:"🎁";position:absolute;top:8px;left:8px;z-index:2;font-size:20px}
+.thumb{aspect-ratio:1/1;background:#f2e6da center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:42px}
+.info{padding:12px 14px 14px}.name{font-weight:700;font-size:15px;margin:0 0 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.by{font-size:12.5px;color:var(--mute);margin-bottom:8px}
+.top{display:flex;justify-content:space-between;align-items:baseline;border-top:1px dashed var(--line);padding-top:8px;font-size:12.5px;color:var(--mute)}
+.top b{font-size:17px;color:var(--red)}.top small{display:block;font-size:11px}
+.empty{text-align:center;color:var(--mute);padding:50px 10px;grid-column:1/-1}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:60;display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:20px 12px}.modal.on{display:flex}
+.sheet{background:var(--card);border-radius:18px;max-width:560px;width:100%;padding:20px;border-top:6px solid var(--red);position:relative}
+.x{position:absolute;right:12px;top:12px;background:transparent;color:var(--ink);font-size:20px;padding:4px 10px}
+label{display:block;font-size:13px;margin:10px 0 4px;color:var(--mute)}.row{display:flex;gap:8px}.row>*{flex:1}
+.pic{width:100%;border-radius:12px;max-height:340px;object-fit:cover;margin-bottom:10px}
+.bid{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.bid .c{color:var(--mute);font-size:12.5px}.bid .amt{font-weight:700;color:var(--red);white-space:nowrap}
+.warn{background:var(--warn);color:var(--warnink);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.5;margin-top:8px;border-left:4px solid var(--gold)}
+.notice{background:var(--warn);color:var(--warnink);padding:10px 14px;border-radius:10px;margin-bottom:12px;display:none}
+.badge{background:var(--gold);color:#3a2a00;border-radius:99px;padding:2px 10px;font-size:12px;font-weight:700}
+input,textarea{font-size:16px}
+button{min-height:44px}
+.x{min-width:44px}
+.fab{display:none;position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;border-radius:99px;padding:14px 22px;background:var(--red);box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.inapp{display:none;background:var(--warn);color:var(--warnink);padding:10px 14px;font-size:13px;text-align:center}
+@media (max-width:640px){
+ header{padding:22px 12px}
+ main{padding:12px 10px calc(90px + env(safe-area-inset-bottom,0px))}
+ .grid{grid-template-columns:repeat(2,1fr);gap:10px}
+ .info{padding:10px}.name{font-size:14px}.top b{font-size:15px}
+ .bar .addBtn{display:none}.fab{display:block}
+ .modal{padding:0;align-items:stretch}
+ .sheet{max-width:none;min-height:100%;border-radius:0;padding:20px 16px calc(24px + env(safe-area-inset-bottom,0px))}
+ .row.stack{flex-direction:column}
+}
+@media (min-width:641px) and (max-width:900px){.grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<canvas id="snow"></canvas>
+<div class="lights"></div>
+<div class="inapp" id="inapp">📱 앱 안의 브라우저에서는 사진 올리기가 안 될 수 있어요. 오른쪽 위 메뉴에서 <b>다른 브라우저로 열기</b>(크롬·사파리)를 눌러주세요.</div>
+<header><div style="font-size:34px">🎄 ⛄ 🎅 ⛄ 🎄</div><h1>2025 DAS R&amp;D 행복나눔 플리마켓</h1>
+<p>물품을 올리고, 갖고 싶은 물건에 입찰 희망가를 남겨주세요 🔔 Merry Christmas!</p></header>
+<main>
+<div class="notice" id="notice"></div>
+<div class="bar"><input type="search" id="q" placeholder="물품명·등록자 검색"><button class="addBtn" onclick="openForm()">＋ 물품 등록</button>
+<span class="badge" id="adm" style="display:none">관리자</span><button class="ghost" id="loginBtn" onclick="toggleAdmin()">관리자 로그인</button></div>
+<div class="grid" id="grid"><div class="empty">불러오는 중…</div></div>
+</main>
+<button class="fab" onclick="openForm()">＋ 물품 등록</button>
+
+<div class="modal" id="mForm"><div class="sheet">
+<button class="x" onclick="closeM('mForm')" aria-label="닫기">✕</button>
+<h2 id="fTitle">물품 등록</h2>
+<label>물품명</label><input id="fName" maxlength="60">
+<label>등록자</label><input id="fSeller" maxlength="30" placeholder="이름 또는 닉네임">
+<label>설명</label><textarea id="fDesc" maxlength="800" placeholder="상태, 구성품, 수령 방법 등"></textarea>
+<label>사진</label><input type="file" id="fImg" accept="image/*">
+<div id="pwBox"><label id="pwLabel">임시 비밀번호 (4자 이상)</label><input id="fPw" type="password" maxlength="64" autocomplete="new-password">
+<div class="warn" id="pwWarn">⚠️ <b>임시 비밀번호를 분실하면 수정이 어렵습니다.</b> 로그인 없이 쓰는 대신, 이 비밀번호가 내 물품임을 증명하는 유일한 방법이에요. 삭제는 관리자만 할 수 있어 요청이 늦어질 수 있습니다. 반드시 메모해 두세요. 다른 서비스 비밀번호는 쓰지 마세요.</div></div>
+<div class="row stack" style="margin-top:16px"><button class="ghost" onclick="closeM('mForm')">취소</button><button id="fSave" onclick="saveItem()">저장</button></div>
+</div></div>
+<div class="modal" id="mLogin"><div class="sheet">
+<button class="x" onclick="closeM('mLogin')" aria-label="닫기">✕</button>
+<h2>관리자 로그인</h2>
+<label>이메일</label><input id="aEmail" type="email" autocomplete="username">
+<label>비밀번호</label><input id="aPw" type="password" autocomplete="current-password">
+<div class="row stack" style="margin-top:16px"><button class="ghost" onclick="closeM('mLogin')">취소</button><button id="aGo" onclick="doLogin()">로그인</button></div>
+</div></div>
+<div class="modal" id="mDet"><div class="sheet" id="det"></div></div>
+
+<script>
+/* ★ 설정: Supabase 프로젝트 값으로 바꾸세요 */
+const SB_URL="https://dbjdgjpmbzfrlobwxskx.supabase.co", ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRiamRnanBtYnpmcmxvYnd4c2t4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2NzM1OTMsImV4cCI6MjExMTI0OTU5M30.1BOR1OMHAgYwDO2YdcrhN-9xFcua7jCKwcm6Mvttg_o";
+const FN=SB_URL+"/functions/v1/market";
+const $=id=>document.getElementById(id), won=n=>Number(n).toLocaleString('ko-KR')+'원';
+let items=[],bids=[],editId=null,curId=null,img64=null,adminToken=null;
+try{adminToken=sessionStorage.getItem('fm_admin')}catch(e){}
+const H=()=>({apikey:ANON,Authorization:'Bearer '+ANON});
+
+async function api(action,body){
+  const r=await fetch(FN,{method:'POST',headers:{...H(),'Content-Type':'application/json',...(adminToken?{'x-admin-token':adminToken}:{})},body:JSON.stringify({action,...body})});
+  const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'요청 실패');return j}
+async function load(){
+  try{
+    const [a,b]=await Promise.all([fetch(SB_URL+'/rest/v1/items_public?select=*&order=created_at.desc',{headers:H()}),fetch(SB_URL+'/rest/v1/bids_public?select=*',{headers:H()})]);
+    if(!a.ok||!b.ok)throw 0;items=await a.json();bids=await b.json();$('notice').style.display='none';render()
+  }catch(e){const n=$('notice');n.textContent='데이터를 불러오지 못했어요. 잠시 후 다시 시도해주세요.';n.style.display='block'}}
+function setAdminUI(){const on=!!adminToken;$('adm').style.display=on?'inline-block':'none';$('loginBtn').textContent=on?'로그아웃':'관리자 로그인';if($('mDet').classList.contains('on'))fillDet()}
+async function toggleAdmin(){
+  if(adminToken){adminToken=null;try{sessionStorage.removeItem('fm_admin')}catch(e){}setAdminUI();return}
+  $('aPw').value='';$('mLogin').classList.add('on')}
+async function doLogin(){
+  const email=$('aEmail').value.trim(),pw=$('aPw').value;if(!email||!pw)return;
+  $('aGo').disabled=true;
+  const r=await fetch(SB_URL+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:ANON,'Content-Type':'application/json'},body:JSON.stringify({email,password:pw})});
+  const j=await r.json().catch(()=>({}));$('aGo').disabled=false;if(!r.ok){alert('로그인 실패: 이메일/비밀번호를 확인해주세요');return}
+  adminToken=j.access_token;try{sessionStorage.setItem('fm_admin',adminToken)}catch(e){}closeM('mLogin');setAdminUI()}
+
+(function(){const c=$('snow'),x=c.getContext('2d');let W,H2,f=[];
+function rs(){W=c.width=innerWidth;H2=c.height=innerHeight}rs();addEventListener('resize',rs);
+for(let i=0;i<70;i++)f.push({x:Math.random()*W,y:Math.random()*H2,r:Math.random()*2.6+.8,s:Math.random()*.9+.3,d:Math.random()*6});
+if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+(function t(){x.clearRect(0,0,W,H2);x.fillStyle='rgba(255,255,255,.9)';x.shadowColor='rgba(120,160,200,.6)';x.shadowBlur=3;
+f.forEach(p=>{p.y+=p.s;p.d+=.02;p.x+=Math.sin(p.d)*.5;if(p.y>H2){p.y=-5;p.x=Math.random()*W}x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill()});requestAnimationFrame(t)})()})();
+
+const mk=(tag,txt,cls)=>{const e=document.createElement(tag);if(txt!=null)e.textContent=txt;if(cls)e.className=cls;return e};
+const safeUrl=u=>/^https:\/\//.test(u||'')?u:'';
+function render(){
+  const q=$('q').value.trim().toLowerCase(),g=$('grid');g.textContent='';
+  const list=items.filter(i=>(i.name+' '+i.seller).toLowerCase().includes(q));
+  if(!list.length){g.appendChild(mk('div','🎅 아직 등록된 물품이 없어요. 첫 번째 선물을 올려보세요!','empty'));return}
+  list.forEach(i=>{const c=mk('div',null,'card');c.onclick=()=>openDet(i.id);
+    const th=mk('div',null,'thumb');const u=safeUrl(i.image_url);if(u)th.style.backgroundImage='url("'+u+'")';else th.textContent='🎁';
+    const inf=mk('div',null,'info'),tp=mk('div',null,'top'),l=mk('span','최고 입찰가');
+    l.appendChild(mk('small',i.top_bid?(i.top_bidder+' · 입찰 '+i.bid_count+'건'):'아직 입찰 없음'));
+    tp.append(l,mk('b',i.top_bid?won(i.top_bid):'-'));
+    inf.append(mk('p',i.name,'name'),mk('div','등록자 · '+i.seller,'by'),tp);c.append(th,inf);g.appendChild(c)});
+  if(curId&&$('mDet').classList.contains('on'))fillDet()}
+function closeM(id){$(id).classList.remove('on')}
+function openForm(id){
+  editId=id||null;img64=null;const i=items.find(x=>x.id===id);
+  $('fTitle').textContent=i?'물품 수정':'물품 등록';
+  $('fName').value=i?i.name:'';$('fDesc').value=i?i.description||'':'';$('fImg').value='';$('fPw').value='';
+  let nm='';try{nm=localStorage.getItem('fm_name')||''}catch(e){}$('fSeller').value=i?i.seller:nm;
+  const needPw=!(i&&adminToken);$('pwBox').style.display=needPw?'block':'none';
+  $('pwLabel').textContent=i?'등록할 때 정한 임시 비밀번호':'임시 비밀번호 (4자 이상)';
+  $('mForm').classList.add('on')}
+function shrink(file){return new Promise((res,rej)=>{const im=new Image,u=URL.createObjectURL(file);
+  im.onload=()=>{const k=Math.min(1,800/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',.75))};im.onerror=rej;im.src=u})}
+$('fImg').onchange=async e=>{const f=e.target.files[0];if(f)try{img64=await shrink(f)}catch(x){alert('이미지를 읽을 수 없어요')}};
+async function saveItem(){
+  const name=$('fName').value.trim(),seller=$('fSeller').value.trim(),pw=$('fPw').value;
+  if(!name||!seller){alert('물품명과 등록자를 입력해주세요');return}
+  if($('pwBox').style.display!=='none'&&pw.length<4){alert('임시 비밀번호를 4자 이상 입력해주세요');return}
+  try{localStorage.setItem('fm_name',seller)}catch(e){}
+  $('fSave').disabled=true;
+  try{await api(editId?'update_item':'create_item',{id:editId,name,seller,description:$('fDesc').value.trim(),password:pw,image:img64});
+    closeM('mForm');await load()}catch(e){alert(e.message)}
+  $('fSave').disabled=false}
+function openDet(id){curId=id;fillDet();$('mDet').classList.add('on')}
+function fillDet(){
+  const i=items.find(x=>x.id===curId),d=$('det');if(!i){closeM('mDet');return}d.textContent='';
+  const x=mk('button','✕','x');x.onclick=()=>closeM('mDet');d.appendChild(x);
+  const u=safeUrl(i.image_url);if(u){const im=mk('img',null,'pic');im.src=u;im.alt=i.name;d.appendChild(im)}
+  d.appendChild(mk('h2',i.name));d.appendChild(mk('div','등록자 · '+i.seller,'by'));
+  if(i.description){const p=mk('p',i.description);p.style.whiteSpace='pre-wrap';d.appendChild(p)}
+  const act=mk('div',null,'row');act.style.margin='10px 0';
+  const e=mk('button','✏️ 수정','ghost');e.onclick=()=>{closeM('mDet');openForm(i.id)};act.appendChild(e);
+  if(adminToken){const del=mk('button','🗑 삭제 (관리자)','red');del.onclick=async()=>{if(!confirm('이 물품과 모든 입찰 댓글을 삭제할까요?'))return;
+    try{await api('delete_item',{id:i.id});closeM('mDet');load()}catch(er){alert(er.message)}};act.appendChild(del)}
+  d.appendChild(act);
+  d.appendChild(mk('h3','🔔 입찰 희망가 · 최고 '+(i.top_bid?won(i.top_bid):'없음')));
+  const list=bids.filter(b=>b.item_id===i.id).sort((a,b)=>b.amount-a.amount||a.created_at.localeCompare(b.created_at));
+  if(!list.length)d.appendChild(mk('div','첫 입찰자가 되어보세요!','by'));
+  list.forEach(b=>{const r=mk('div',null,'bid'),l=mk('div');l.appendChild(mk('div',b.bidder));if(b.comment)l.appendChild(mk('div',b.comment,'c'));
+    r.append(l,mk('div',won(b.amount),'amt'));
+    if(adminToken){const bx=mk('button','✕','ghost');bx.style.padding='2px 8px';bx.onclick=async()=>{try{await api('delete_bid',{id:b.id});load()}catch(er){alert(er.message)}};r.appendChild(bx)}
+    d.appendChild(r)});
+  const f=mk('div');f.style.marginTop='14px';
+  f.innerHTML='<label>이름</label><input id="bName" maxlength="30"><label>입찰 희망가 (원)</label><input id="bAmt" type="number" min="1" step="100" inputmode="numeric"><label>댓글 (선택)</label><input id="bCom" maxlength="200"><div style="margin-top:12px"><button id="bGo" style="width:100%">입찰 댓글 올리기</button></div>';
+  d.appendChild(f);try{$('bName').value=localStorage.getItem('fm_name')||''}catch(e){}
+  $('bGo').onclick=async()=>{const bidder=$('bName').value.trim(),amount=Math.floor(Number($('bAmt').value));
+    if(!bidder||!(amount>0)){alert('이름과 금액을 입력해주세요');return}
+    try{localStorage.setItem('fm_name',bidder)}catch(e){}$('bGo').disabled=true;
+    try{await api('create_bid',{item_id:i.id,bidder,amount,comment:$('bCom').value.trim()});await load()}catch(er){alert(er.message);$('bGo').disabled=false}}}
+$('q').oninput=render;
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('mousedown',e=>{if(e.target===m)m.classList.remove('on')}));
+if(/KAKAOTALK|NAVER\(inapp|Line\/|FBAN|FBAV|Instagram|DaumApps|; wv\)/i.test(navigator.userAgent))$('inapp').style.display='block';
+setAdminUI();load();setInterval(()=>{if(!document.hidden&&!$('mForm').classList.contains('on'))load()},10000);
+</script>
+</body>
+</html>
